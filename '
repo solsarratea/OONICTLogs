@@ -1,0 +1,16 @@
+Fix renaming of local packages
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Wed May 15 16:00:22 2024 +0200
+#
+# On branch master
+# Changes to be committed:
+#	deleted:    finder/certchain/query.go
+#	modified:   finder/main.go
+#	modified:   main.go
+#
+# Untracked files:
+#	finder/certchain/
+#

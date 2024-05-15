@@ -1,4 +1,4 @@
-package ooni
+package ooniapi
 
 import (
 	"fmt"
@@ -6,15 +6,8 @@ import (
 	"net/http"
 )
 
-func QueryMeasurements() ([]byte, error) {
-
-	//TODO: Add date and other parameters from config file
-	apiEndpoint := "https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&failure=false"
-
+func QuerySingleMeasurement(string apiEndpoint) ([]byte, error) {
 	response, err := http.Get(apiEndpoint)
-	if err != nil {
-		return nil, fmt.Errorf("error fetching data from API: %v", err)
-	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {

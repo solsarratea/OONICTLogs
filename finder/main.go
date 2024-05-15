@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"./measurements"
-	"./ooni"
+	"./ooniapi"
 )
 
 func IsFileEmpty(filename string) (bool, error) {
@@ -43,7 +43,7 @@ func Start() {
 		if isEmpty {
 			fmt.Println("File is empty")
 			fmt.Println("Querying raw measurements...")
-			body, err := ooni.QueryMeasurements()
+			body, err := ooniapi.QueryMeasurements()
 
 			if err != nil {
 				fmt.Printf("Failed to query measurements: %v\n", err)
