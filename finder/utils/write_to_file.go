@@ -7,7 +7,7 @@ import (
 	"../measurements"
 )
 
-func WriteToFile(rawMeasurements measurements.RawMeasurements) error {
+func WriteMeasurementsToFile(rawMeasurements measurements.RawMeasurements) error {
 	file, err := os.Create("raw_measurements.txt")
 	if err != nil {
 		return fmt.Errorf("error creating file: %v", err)
@@ -23,5 +23,20 @@ func WriteToFile(rawMeasurements measurements.RawMeasurements) error {
 	}
 
 	fmt.Println("URLs have been written to measurements.txt")
+	return nil
+}
+
+func WriteStringToFile(content, filePath string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open file for writing: %v", err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return fmt.Errorf("failed to write to file: %v", err)
+	}
+
 	return nil
 }
