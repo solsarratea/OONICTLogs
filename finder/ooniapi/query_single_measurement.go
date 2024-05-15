@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func QuerySingleMeasurement(string apiEndpoint) ([]byte, error) {
+func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	response, err := http.Get(apiEndpoint)
 	defer response.Body.Close()
 
