@@ -1,12 +1,13 @@
-package measurements
+package utils
 
-//TODO: Move to a common package for handling files
 import (
 	"fmt"
 	"os"
+
+	"../measurements"
 )
 
-func WriteToFile(rawMeasurements RawMeasurements) error {
+func WriteToFile(rawMeasurements measurements.RawMeasurements) error {
 	file, err := os.Create("raw_measurements.txt")
 	if err != nil {
 		return fmt.Errorf("error creating file: %v", err)
