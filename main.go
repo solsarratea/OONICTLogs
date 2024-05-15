@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"./chainfinder"
+	"./finder"
 	"./submitter"
 )
 
 func main() {
 	fmt.Println("Starting OONICTLogs...")
 
-	go chainfinder.Start()
+	go finder.Start()
 	go submitter.Start()
 
 	select {}

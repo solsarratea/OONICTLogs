@@ -1,4 +1,4 @@
-package chainfinder
+package finder
 
 import (
 	"fmt"
