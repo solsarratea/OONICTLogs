@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"time"
 
+	"../common"
 	"./utils"
 )
 
-func Flush(config Configuration) {
+func Flush(config common.Configuration) {
 	utils.RemoveLineFromFile(config.PathMeasurements)
 }
 
 func Start() {
 
 	fmt.Println("Starting Chainfinder...")
-	config, err := ReadConfigurationFile()
+	config, err := common.ReadConfigurationFile()
 
 	if err != nil {
 		fmt.Println("OOPs, something went wrong... Invalid configuration file!")

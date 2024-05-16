@@ -5,11 +5,12 @@ import (
 	"io"
 	"net/http"
 
+	"../common"
 	"./measurements"
 	"./utils"
 )
 
-func QueryMeasurements(config Configuration) ([]byte, error) {
+func QueryMeasurements(config common.Configuration) ([]byte, error) {
 	//since: 2023-12-20T00%3A00%3A00
 	//until: 2024-07-20T00%3A00%3A00
 
@@ -34,7 +35,7 @@ func QueryMeasurements(config Configuration) ([]byte, error) {
 	return body, nil
 }
 
-func GetRawMeasurements(config Configuration) {
+func GetRawMeasurements(config common.Configuration) {
 	body, err := QueryMeasurements(config)
 	if err != nil {
 		fmt.Printf("Failed to query measurements: %v\n", err)

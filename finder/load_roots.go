@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"../common"
 	"./roots"
 )
 
@@ -30,7 +31,7 @@ func QueryRootCertificates(CTLogURI string) ([]byte, error) {
 
 }
 
-func GetRootNodes(config Configuration) (roots.Roots, error) {
+func GetRootNodes(config common.Configuration) (roots.Roots, error) {
 
 	body, err := QueryRootCertificates(config.CTLog.URI)
 

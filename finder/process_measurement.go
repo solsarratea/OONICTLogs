@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 
+	"../common"
 	"./certificate"
 	"./roots"
 	"./utils"
@@ -32,7 +33,7 @@ func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	return body, nil
 }
 
-func ProcessMeasurement(config Configuration, collection roots.Roots) error {
+func ProcessMeasurement(config common.Configuration, collection roots.Roots) error {
 	apiEndpoint, _ := utils.ReadLineFromFile(config.PathMeasurements)
 
 	re := regexp.MustCompile(`measurement_uid=([^&]+)`)
