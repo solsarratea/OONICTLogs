@@ -9,7 +9,7 @@ import (
 func QueryMeasurements() ([]byte, error) {
 
 	//TODO: Add date and other parameters from config file
-	apiEndpoint := "https://api.ooniapi.io/api/v1/measurements?test_name=web_connectivity&failure=false"
+	apiEndpoint := "https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&failure=false"
 
 	response, err := http.Get(apiEndpoint)
 	if err != nil {
