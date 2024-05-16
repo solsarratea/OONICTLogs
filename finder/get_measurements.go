@@ -11,12 +11,7 @@ import (
 )
 
 func QueryMeasurements(config common.Configuration) ([]byte, error) {
-	//since: 2023-12-20T00%3A00%3A00
-	//until: 2024-07-20T00%3A00%3A00
-
 	apiEndpoint := fmt.Sprintf("https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&since=%s&until=%s&failure=false&order_by=measurement_start_time&order=asc&limit=100", config.OONIMeasurements.Since, config.OONIMeasurements.Until)
-
-	fmt.Printf(apiEndpoint)
 
 	response, err := http.Get(apiEndpoint)
 	if err != nil {

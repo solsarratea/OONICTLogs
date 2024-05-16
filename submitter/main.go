@@ -82,7 +82,10 @@ func ProcessSubmissions(config common.Configuration) {
 			var subresp SubmissionResponse
 
 			err = json.Unmarshal(body, &subresp)
-			utils.WriteStringToFile(string(body), "logs.txt")
+			surl := "submission-response-" + measurementUID + ".txt"
+			utils.WriteStringToFile(string(body), surl)
+
+			fmt.Printf("Response has been written at:  %s \n", surl)
 
 			if err != nil {
 				fmt.Printf("Error parsing response: %v", err)
@@ -90,7 +93,7 @@ func ProcessSubmissions(config common.Configuration) {
 			}
 
 			fmt.Printf("Success entry for: ", measurementUID)
-			time.Sleep(2500 * time.Second)
+			time.Sleep(500 * time.Second)
 		}
 	}
 
@@ -107,7 +110,6 @@ func Start() {
 	}
 
 	for {
-		fmt.Println("Submitter running...")
 		ProcessSubmissions(config)
 		time.Sleep(500 * time.Second)
 	}
