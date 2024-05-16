@@ -30,15 +30,15 @@ func QueryRootCertificates(CTLogURI string) ([]byte, error) {
 
 }
 
-func GetRootNodes(config Configuration) (Roots, error) {
+func GetRootNodes(config Configuration) (roots.Roots, error) {
 
 	body, err := QueryRootCertificates(config.CTLog.URI)
 
-	if err != nill {
-		return Root{}, fmt.Errorf("Error fetching the root nodes from %s", configCTLog.URI)
+	if err != nil {
+		return roots.Roots{}, fmt.Errorf("Error fetching the root nodes from %s", config.CTLog.URI)
 
 	}
 
-	roots, err := roots.ParseRootCertificates(body)
+	return roots.ParseRootCertificates(body)
 
 }
