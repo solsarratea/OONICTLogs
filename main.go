@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"./finder"
 	"./submitter"
@@ -9,9 +10,30 @@ import (
 
 func main() {
 	fmt.Println("Starting OONICTLogs...")
+	ENABLE_FINDER := false
+	ENABLE_SUBMITTER := false
 
-	go finder.Start()
-	go submitter.Start()
+	if len(os.Args) == 1 || os.Args[1] == "all" {
+		ENABLE_FINDER = true
+		ENABLE_SUBMITTER = true
+	} else {
+		for _, arg := range os.Args[1:] {
+			switch arg {
+			case "find":
+				ENABLE_FINDER = true
+			case "submit":
+				ENABLE_SUBMITTER = true
+			}
+		}
+	}
+
+	if ENABLE_FINDER {
+		go finder.Start()
+	}
+
+	if ENABLE_SUBMITTER {
+		go submitter.Start()
+	}
 
 	select {}
 }
