@@ -1,9 +1,7 @@
-package certchain
+package certificate
 
 import (
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 )
 
@@ -23,26 +21,6 @@ type Measurement struct {
 	TestKeys TestKeys `json:"test_keys"`
 }
 
-func AppendHeadersFooters(certPEM string) string {
-	return fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", certPEM)
-}
-
-func parsePEMString(pemCert string) (*x509.Certificate, error) {
-
-	block, _ := pem.Decode([]byte(pemCert))
-	if block == nil || block.Type != "CERTIFICATE" {
-		return nil, fmt.Errorf("Failed to decode PEM block containing certificate")
-	}
-
-	cert, err := x509.ParseCertificate(block.Bytes)
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to parse x.509: %w", err)
-	}
-
-	return cert, nil
-}
-
 func GetCertificateChain(body []byte) ([][]string, error) {
 	var response Measurement
 
@@ -58,7 +36,7 @@ func GetCertificateChain(body []byte) ([][]string, error) {
 		for _, cert := range handshake.PeerCertificates {
 			pemCert := AppendHeadersFooters(cert.Data)
 
-			_, err := parsePEMString(pemCert)
+			_, err := ParsePEMString(pemCert)
 
 			if err != nil {
 				return nil, fmt.Errorf("Error parsing certificate: %v", err)

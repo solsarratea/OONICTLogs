@@ -1,4 +1,4 @@
-package certchain
+package certificate
 
 import (
 	"io/ioutil"
@@ -30,7 +30,7 @@ func TestGetCChainFromValidInput(t *testing.T) {
 
 	for _, cchain := range output {
 		if len(cchain) < 1 {
-			t.Errorf("EMpty chain")
+			t.Errorf("Empty chain")
 		}
 	}
 }
