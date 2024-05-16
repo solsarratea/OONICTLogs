@@ -19,6 +19,7 @@ type TestKeys struct {
 
 type Measurement struct {
 	TestKeys TestKeys `json:"test_keys"`
+	URL      string   `json:"input"`
 }
 
 func GetCertificateChain(body []byte) ([][]string, error) {
@@ -42,22 +43,21 @@ func GetCertificateChain(body []byte) ([][]string, error) {
 				return nil, fmt.Errorf("Error parsing certificate: %v", err)
 			}
 
-			//TODO 1: Add a validation function
-			// should include - valid chain according RF6962
-			// maybe check root certificate not to be signed by CA
-
 			cchain = append(cchain, pemCert)
 		}
 		handshakesCChain = append(handshakesCChain, cchain)
-		//TODO 2: Add a way of chosing the proper/right chain, seems that for all handshakes is the same
 	}
 
 	return handshakesCChain, nil
 }
 
-//DEBUGGING FUNCTIONS FOR READING CERTIFICATES:
+func GetURL(body []byte) (string, error) {
+	//FIXME: Unnecesary unmarshall
+	var response Measurement
 
-// Print certificate details (optional)
-//fmt.Printf("Certificate Details:\n")
-//fmt.Printf("  Subject: %s\n", parsedCert.Subject)
-//fmt.Printf("  Issuer: %s\n", parsedCert.Issuer)
+	err := json.Unmarshal(body, &response)
+	if err != nil {
+		return "", fmt.Errorf("Error parsing response: %v", err)
+	}
+	return response.URL, nil
+}

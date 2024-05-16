@@ -14,10 +14,10 @@ func Flush(config Configuration) {
 func Start() {
 
 	fmt.Println("Starting Chainfinder...")
-
 	config, err := ReadConfigurationFile()
 
 	if err != nil {
+		fmt.Println("OOPs, something went wrong... Invalid configuration file!")
 		return
 	}
 
@@ -28,14 +28,17 @@ func Start() {
 		isEmpty, _ := utils.IsFileEmpty(config.PathMeasurements)
 
 		if isEmpty {
-			GetRawMeasurements(config)
+			GetRawMeasurements(config) //TODO: Update config
 
 		} else {
 			fmt.Println("Processing measurements...")
-			ProcessMeasurement(config, roots) //TODO: Update config
+			err = ProcessMeasurement(config, roots)
+			if err != nil {
+				fmt.Printf("%v", err)
+			}
 			Flush(config)
 		}
 	}
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(20 * time.Second)
 }

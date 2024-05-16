@@ -1,6 +1,7 @@
 package finder
 
 import (
+	"crypto/x509"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +11,12 @@ import (
 	"./roots"
 	"./utils"
 )
+
+type ValidSubmission struct {
+	URL              string
+	Root             *x509.Certificate
+	CertificateChain []string
+}
 
 func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	response, err := http.Get(apiEndpoint)
@@ -27,8 +34,7 @@ func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	return body, nil
 }
 
-func ProcessMeasurement(config Configuration, collection roots.Roots) {
-	//TODO: Add propper logs of success/lost measurements
+func ProcessMeasurement(config Configuration, collection roots.Roots) error {
 	apiEndpoint, _ := utils.ReadLineFromFile(config.PathMeasurements)
 
 	re := regexp.MustCompile(`measurement_uid=([^&]+)`)
@@ -38,32 +44,46 @@ func ProcessMeasurement(config Configuration, collection roots.Roots) {
 	body, err := QuerySingleMeasurement(apiEndpoint)
 
 	if err != nil {
-		fmt.Printf("Failed to query measurements: %v\n", err)
+		return fmt.Errorf("Failed to query measurements: %v\n", err)
 
 	} else {
-
 		cchain, _ := certificate.GetCertificateChain(body)
 		if len(cchain) > 0 {
+			//FIXME: Check TLS handshakes are resolving to the same certificate chane
 			subchain := cchain[0]
 
 			if len(subchain) > 0 {
 				for _, c := range subchain {
+					url, _ := certificate.GetURL(body)
 					cert, _ := certificate.ParsePEMString(c)
-					isRoot := roots.Contained(cert, collection)
-					if isRoot {
-						fmt.Println("wehavetheone")
-					} else {
-						fmt.Println("ni")
+					hasRoot := roots.FindParent(cert, collection)
+
+					if hasRoot != nil {
+						fmt.Printf("\nWEHAVEONE ＼(＾O＾)／	 \n")
+
+						submission := ValidSubmission{
+							Root:             hasRoot,
+							CertificateChain: subchain,
+							URL:              url,
+						}
+						path := config.PathCert + measurement_uid
+						err := utils.WriteStructToJSONFile(submission, path)
+
+						if err != nil {
+							return fmt.Errorf("Failed to write file with valid measurement: %s\n", err)
+						}
+
+						return nil
 					}
 				}
 			}
 		}
-		//for i, subchain := range cchain {
+		return fmt.Errorf("Did not found valid root node")
 
-		//	content := strings.Join(subchain, "\n")
-		//	path := config.PathCert + measurement_uid + "-chain-" + strconv.Itoa(i)
-		//	utils.WriteStringToFile(content, path)
-		//}
+		/* Obsolete code for writing and analysing cert chains
+		for i, subchain := range cchain {
+			content := strings.Join(subchain, "\n")
+
+		}*/
 	}
-
 }
