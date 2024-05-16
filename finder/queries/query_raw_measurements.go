@@ -1,4 +1,4 @@
-package ooniapi
+package queries
 
 import (
 	"fmt"

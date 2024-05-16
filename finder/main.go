@@ -11,7 +11,7 @@ import (
 
 	"./certchain"
 	"./measurements"
-	"./ooniapi"
+	"./queries"
 	"./utils"
 )
 
@@ -51,7 +51,7 @@ func ReadConfigurationFile() (Configuration, error) {
 }
 
 func GetRawMeasurements() {
-	body, err := ooniapi.QueryMeasurements()
+	body, err := queries.QueryMeasurements()
 	if err != nil {
 		fmt.Printf("Failed to query measurements: %v\n", err)
 
@@ -74,7 +74,8 @@ func ProcessMeasurements(config Configuration) {
 	re := regexp.MustCompile(`measurement_uid=([^&]+)`)
 	measurement_uid := re.FindStringSubmatch(apiEndpoint)[1]
 
-	body, err := ooniapi.QuerySingleMeasurement(apiEndpoint)
+	fmt.Println("Processing measure with id: " + measurement_uid)
+	body, err := queries.QuerySingleMeasurement(apiEndpoint)
 
 	if err != nil {
 		fmt.Printf("Failed to query measurements: %v\n", err)
@@ -107,12 +108,13 @@ func Start() {
 
 	for {
 
-		isEmpty, _ := utils.IsFileEmpty(config.PathCert)
+		isEmpty, _ := utils.IsFileEmpty(config.PathMeasurements)
 
 		if isEmpty {
 			GetRawMeasurements() //TOOD: Update config
 
 		} else {
+			fmt.Println("Processing measurements...")
 			ProcessMeasurements(config) //TODO: update config
 			Flush(config)
 		}
