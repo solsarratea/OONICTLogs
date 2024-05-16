@@ -14,10 +14,17 @@ type CTLog struct {
 	End       string `json:"end"` //parse it with RFC3339
 }
 
+type OONIMeasurements struct {
+	Since string `json:"since"`
+	Until string `json:"until"`
+	Limit string `json:"limit"`
+}
+
 type Configuration struct {
-	PathMeasurements string `json:"path-measurements"`
-	PathCert         string `json:"path-cert"`
-	CTLog            CTLog  `json:"ctlog"`
+	PathMeasurements string           `json:"path-measurements"`
+	PathCert         string           `json:"path-cert"`
+	CTLog            CTLog            `json:"ctlog"`
+	OONIMeasurements OONIMeasurements `json:"ooni-measurements"`
 }
 
 func ReadConfigurationFile() (Configuration, error) {
