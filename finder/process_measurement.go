@@ -1,7 +1,7 @@
 package finder
 
 import (
-	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,9 +13,7 @@ import (
 )
 
 type ValidSubmission struct {
-	URL              string
-	Root             *x509.Certificate
-	CertificateChain []string
+	Chain []string
 }
 
 func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
@@ -54,18 +52,21 @@ func ProcessMeasurement(config Configuration, collection roots.Roots) error {
 
 			if len(subchain) > 0 {
 				for _, c := range subchain {
-					url, _ := certificate.GetURL(body)
-					cert, _ := certificate.ParsePEMString(c)
+					ch := certificate.AppendHeadersFooters(c)
+					cert, _ := certificate.ParsePEMString(ch)
 					hasRoot := roots.FindParent(cert, collection)
 
 					if hasRoot != nil {
 						fmt.Printf("\nWEHAVEONE ＼(＾O＾)／	 \n")
+						base64Cert := base64.StdEncoding.EncodeToString(hasRoot.Raw)
+						//	fmt.Printf(base64Cert)
+						final := append(subchain, base64Cert)
+						//	fmt.Printf(subchain[0])
 
-						submission := ValidSubmission{
-							Root:             hasRoot,
-							CertificateChain: subchain,
-							URL:              url,
+						submission := map[string]interface{}{
+							"chain": final,
 						}
+
 						path := config.PathCert + measurement_uid
 						err := utils.WriteStructToJSONFile(submission, path)
 

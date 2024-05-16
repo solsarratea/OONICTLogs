@@ -35,15 +35,8 @@ func GetCertificateChain(body []byte) ([][]string, error) {
 		var cchain []string
 
 		for _, cert := range handshake.PeerCertificates {
-			pemCert := AppendHeadersFooters(cert.Data)
 
-			_, err := ParsePEMString(pemCert)
-
-			if err != nil {
-				return nil, fmt.Errorf("Error parsing certificate: %v", err)
-			}
-
-			cchain = append(cchain, pemCert)
+			cchain = append(cchain, cert.Data)
 		}
 		handshakesCChain = append(handshakesCChain, cchain)
 	}
@@ -51,13 +44,9 @@ func GetCertificateChain(body []byte) ([][]string, error) {
 	return handshakesCChain, nil
 }
 
-func GetURL(body []byte) (string, error) {
-	//FIXME: Unnecesary unmarshall
-	var response Measurement
+//DEBUGGING FUNCTIONS FOR READING CERTIFICATES:
 
-	err := json.Unmarshal(body, &response)
-	if err != nil {
-		return "", fmt.Errorf("Error parsing response: %v", err)
-	}
-	return response.URL, nil
-}
+// Print certificate details (optional)
+//fmt.Printf("Certificate Details:\n")
+//fmt.Printf("  Subject: %s\n", parsedCert.Subject)
+//fmt.Printf("  Issuer: %s\n", parsedCert.Issuer)
