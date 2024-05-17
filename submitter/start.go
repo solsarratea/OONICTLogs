@@ -15,11 +15,16 @@ import (
 	"../finder/utils"
 )
 
+// SubmissionResponse represents  structure of the response from API call POST chain log
+// Specified in RFC 6962 Section 4.1
 type SubmissionResponse struct {
+	SCTVerion string `json:"sct_verion"`
 	Timestamp string `json:"timestamp"`
-	Signature string `json: "signature"`
+	Signature string `json:"signature"`
+	Id        string `json:"id"`
 }
 
+//PostChain implements an API call for posting certificate chain
 func PostChain(URI string, data []byte) ([]byte, error) {
 	apiEndpoint := URI + "ct/v1/add-chain"
 	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(data))
@@ -44,6 +49,11 @@ func PostChain(URI string, data []byte) ([]byte, error) {
 	return body, nil
 }
 
+type ValidSubmission struct {
+	Certificates []string `json:"chain"`
+}
+
+// ProcessSubmissions implements the reading and posting of valid certificate chain
 func ProcessSubmissions(config common.Configuration) {
 	dir := config.PathCert
 	files, err := ioutil.ReadDir(dir)
@@ -63,14 +73,29 @@ func ProcessSubmissions(config common.Configuration) {
 			data, err := ioutil.ReadFile(filePath)
 			if err != nil {
 				log.Printf("Failed to read file %s: %v", filePath, err)
-				continue
+				return
+			}
+
+			//Check if the format is still valid
+			var submission ValidSubmission
+			if err := json.Unmarshal(data, &submission); err != nil {
+				log.Printf("Failed to unmarshal JSON from file %s: %v", filePath, err)
+
+				// Remove the file after reading
+				err = os.Remove(filePath)
+				if err != nil {
+					log.Printf("Failed to remove file %s: %v", filePath, err)
+					continue
+				}
+
+				return
 			}
 
 			// Make HTTP POST request
 			body, err := PostChain(config.CTLog.URI, data)
 			if err != nil {
 				log.Printf("Failed to submit data for %s: %v", measurementUID, err)
-				continue
+				return
 			}
 			// Remove the file after reading
 			err = os.Remove(filePath)
@@ -99,6 +124,7 @@ func ProcessSubmissions(config common.Configuration) {
 
 }
 
+// Start orchastrates the submission of valid entries shared directory
 func Start() {
 	fmt.Println("Starting Submitter")
 
