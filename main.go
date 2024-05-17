@@ -8,8 +8,10 @@ import (
 	"./submitter"
 )
 
+// Receives OS arguments and starts: finder and submitter processes
 func main() {
 	fmt.Println("Starting OONICTLogs...")
+
 	ENABLE_FINDER := false
 	ENABLE_SUBMITTER := false
 
