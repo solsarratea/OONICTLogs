@@ -48,10 +48,16 @@ Queries and processes all measurements to extract the certificate chains for sub
 
 ## Improve/TODOs (sorted by priority):
 ~- Update config.json automatically after processing all measurments (last certifiate update since)~
-- Improve certificate chain validation and unnecessary submissions
+- Improve certificate chain validation:
+ - Check intermediate certs are resolving to parents.
+ - Only principal cert should look for its root.
+ - Check if already submitted by using the signature field:
+ ["Using the signature field, we can verify that the certificate was submitted to a log. Using our SCT deep dive guide, you could further decode this value."](https://letsencrypt.org/docs/ct-logs/#Sunlight)
+
 - Improve log system: specially for submitter.
 - Research on async functions, improve function calls and concurrency
 - Do not allow read/write at same time !! (it was OK for testing)
+- `raw_measurements.txt` proabably be replaced for a stack
 - Automatically update the Twig CTLog according to date/time window
 https://letsencrypt.org/docs/ct-logs/#Sunlight
 - `utils/` will probably dissappear/be moved to `/common` though was very useful for interacting with APIs during devlopment
