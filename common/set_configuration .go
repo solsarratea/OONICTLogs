@@ -1,5 +1,7 @@
 package common
 
+// Implements the interface for parsing the `config.json` file at root directory
+
 import (
 	"encoding/json"
 	"fmt"
