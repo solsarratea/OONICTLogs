@@ -34,7 +34,7 @@ Queries and processes all measurements to extract the certificate chains for sub
 **How?** <br/>
 
 + Loads root certificates from Twig. <br/>
-+ Get rawmeasurments from OONI and write indidivual measurements into *raw_measurements.txt*. <br/>
++ Get raw measurments from OONI and write collection of single measurement into *raw_measurements.txt*. <br/>
 + Process each measurement. <br/>
 ++ Read from *raw_measurements.txt* and process each URL: <br/>
 +++ Query single measurement to OONI <br/>
@@ -57,7 +57,7 @@ Queries and processes all measurements to extract the certificate chains for sub
 - Improve log system: specially for submitter.
 - Research on async functions, improve function calls and concurrency
 - Do not allow read/write at same time !! (it was OK for testing)
-- `raw_measurements.txt` proabably be replaced for a stack
+- `raw_measurements.txt` proabably be replaced for a stack (it was also OK for testing)
 - Automatically update the Twig CTLog according to date/time window
 https://letsencrypt.org/docs/ct-logs/#Sunlight
 - `utils/` will probably dissappear/be moved to `/common` though was very useful for interacting with APIs during devlopment
