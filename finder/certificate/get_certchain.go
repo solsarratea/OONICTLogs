@@ -5,24 +5,29 @@ import (
 	"fmt"
 )
 
+// Certificate represents child structure of the response from API call get measurement from OONI
 type Certificate struct {
 	Data string `json:"data"`
 }
 
+//TLSHandshake represents child structure of the response from API call get measurement from OONI
 type TLSHandshake struct {
 	PeerCertificates []Certificate `json:"peer_certificates"`
 }
 
+//TestKeys represents child structure of the response from API call get measurement from OONI
 type TestKeys struct {
 	TLSHandshakes []TLSHandshake `json:"tls_handshakes"`
 }
 
+//Measurement represents child structure of the response from API call get measurement from OONI
 type Measurement struct {
 	TestKeys  TestKeys `json:"test_keys"`
 	URL       string   `json:"input"`
 	StartTime string   `json:"test_start_time"`
 }
 
+// DecodeMeasurement implements the json.Unmarshal interface for Measurements
 func DecodeMeasurement(body []byte) (Measurement, error) {
 	var response Measurement
 
@@ -34,6 +39,7 @@ func DecodeMeasurement(body []byte) (Measurement, error) {
 	return response, nil
 }
 
+// GetCertificateChain extract the raw certificate data from the tls_handshakes
 func GetCertificateChain(response Measurement) ([][]string, error) {
 
 	var handshakesCChain [][]string
@@ -49,10 +55,3 @@ func GetCertificateChain(response Measurement) ([][]string, error) {
 
 	return handshakesCChain, nil
 }
-
-//DEBUGGING FUNCTIONS FOR READING CERTIFICATES:
-
-// Print certificate details (optional)
-//fmt.Printf("Certificate Details:\n")
-//fmt.Printf("  Subject: %s\n", parsedCert.Subject)
-//fmt.Printf("  Issuer: %s\n", parsedCert.Issuer)

@@ -31,7 +31,9 @@ func QueryRootCertificates(CTLogURI string) ([]byte, error) {
 
 }
 
-func GetRootNodes(config common.Configuration) (roots.Roots, error) {
+// LoadRoots implements the querying and parsing of the CTLogs roots.
+// Returns an array of *x509.Certificates.
+func LoadRoots(config common.Configuration) (roots.Roots, error) {
 
 	body, err := QueryRootCertificates(config.CTLog.URI)
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// MeasurementsMeta represents child structure of the response from API call to get raw measurements from OONI
 type MeasurementMeta struct {
 	Anomaly              bool   `json:"anomaly"`
 	Confirmed            bool   `json:"confirmed"`
@@ -19,10 +20,12 @@ type MeasurementMeta struct {
 	TestName             string `json:"test_name"`
 }
 
+// RawMeasurements represents the response from API call to get raw measurements from OONI
 type RawMeasurements struct {
 	Results []MeasurementMeta `json:"results"`
 }
 
+// DecodeMeasurements implements the json.Unmarshal interface for RawMeasurements
 func DecodeMeasurements(body []byte) (RawMeasurements, error) {
 	var rawMeasurements RawMeasurements
 

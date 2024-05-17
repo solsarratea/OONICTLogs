@@ -6,10 +6,12 @@ import (
 	"fmt"
 )
 
-func AppendHeadersFooters(certPEM string) string {
-	return fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", certPEM)
+//AppendHeadersFooters implements the interface of creating a PEM cert out of raw certificate string
+func AppendHeadersFooters(cert string) string {
+	return fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", cert)
 }
 
+//ParsePEMString implements the interface of decoding a PEM certificate into x.509
 func ParsePEMString(pemCert string) (*x509.Certificate, error) {
 
 	block, _ := pem.Decode([]byte(pemCert))

@@ -5,13 +5,15 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 
 	"../common"
 	"./measurements"
-	"./utils"
 )
 
 func QueryMeasurements(config common.Configuration) ([]byte, error) {
+
+	//  Querying window for raw measurements depend on config
 	apiEndpoint := "https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&since=" + url.QueryEscape(config.OONIMeasurements.Since) + "&until=" + url.QueryEscape(config.OONIMeasurements.Until) + "&failure=false&order_by=measurement_start_time&order=asc&limit=100"
 
 	fmt.Printf(apiEndpoint)
@@ -33,6 +35,7 @@ func QueryMeasurements(config common.Configuration) ([]byte, error) {
 	return body, nil
 }
 
+// GetRawMeasurements extract URLs for single measurement reports and write it into a text file.
 func GetRawMeasurements(config common.Configuration) {
 	body, err := QueryMeasurements(config)
 	if err != nil {
@@ -45,7 +48,26 @@ func GetRawMeasurements(config common.Configuration) {
 		if err != nil {
 			fmt.Printf("Failed to decode raw measurements %v\n", err)
 		} else {
-			utils.WriteMeasurementsToFile(rawMeasurements)
+			writeMeasurementsToFile(config.PathMeasurements, rawMeasurements)
 		}
 	}
+}
+
+func writeMeasurementsToFile(url string, rawMeasurements measurements.RawMeasurements) error {
+	file, err := os.Create(url)
+	if err != nil {
+		return fmt.Errorf("error creating file: %v", err)
+	}
+
+	defer file.Close()
+
+	for _, result := range rawMeasurements.Results {
+		_, err := file.WriteString(result.URL + "\n")
+		if err != nil {
+			return fmt.Errorf("error writing to file: %v", err)
+		}
+	}
+
+	fmt.Println("URLs have been written to %s \n", url)
+	return nil
 }

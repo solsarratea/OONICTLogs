@@ -13,10 +13,6 @@ import (
 	"./utils"
 )
 
-type ValidSubmission struct {
-	Chain []string
-}
-
 func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	response, err := http.Get(apiEndpoint)
 	defer response.Body.Close()
@@ -32,6 +28,14 @@ func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 
 	return body, nil
 }
+
+// ProcessMeasurement implements the querying, finding and storing of valid certificate chains.
+//
+// Receives config and loaded certificate roots from CTLogs
+// Gets single measurement, extract valid certificate chains from tls_handshakes.
+// Makes a linear search to find a if resolves to a valid root.
+// Writes  entry into specified directory (in config.json) with valid format according to https://crt.sh/gen-add-chain
+// Returns the starting measurement time.
 
 func ProcessMeasurement(config common.Configuration, collection roots.Roots) (string, error) {
 
@@ -52,7 +56,7 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 
 		cchain, _ := certificate.GetCertificateChain(measurement)
 		if len(cchain) > 0 {
-			//FIXME: Check TLS handshakes are resolving to the same certificate chane
+			//FIXME: Check TLS handshakes are resolving to the same certificate chain
 			subchain := cchain[0]
 
 			if len(subchain) > 0 {
@@ -64,9 +68,8 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 					if hasRoot != nil {
 						fmt.Printf("\nWEHAVEONE ＼(＾O＾)／	 \n")
 						base64Cert := base64.StdEncoding.EncodeToString(hasRoot.Raw)
-						//	fmt.Printf(base64Cert)
+
 						final := append(subchain, base64Cert)
-						//	fmt.Printf(subchain[0])
 
 						submission := map[string]interface{}{
 							"chain": final,
@@ -84,12 +87,7 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 				}
 			}
 		}
+
 		return updatedSince, fmt.Errorf("Did not found valid root node")
-
-		/* Obsolete code for writing and analysing cert chains
-		for i, subchain := range cchain {
-			content := strings.Join(subchain, "\n")
-
-		}*/
 	}
 }
