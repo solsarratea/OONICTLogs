@@ -7,8 +7,8 @@ import (
 
 func TestGetCChainFromEmpty(t *testing.T) {
 	jsonData := []byte(`{"result":[]}`)
-
-	output, _ := GetCertificateChain(jsonData)
+	measurement, _ := DecodeMeasurement(jsonData)
+	output, _ := GetCertificateChain(measurement)
 
 	if len(output) != 0 {
 		t.Errorf("Expected rawMeasurements.Results length to be 0, got %d", len(output))
@@ -17,8 +17,8 @@ func TestGetCChainFromEmpty(t *testing.T) {
 
 func TestGetCChainFromValidInput(t *testing.T) {
 	jsonData, _ := ioutil.ReadFile("sample_single_measurement.json")
-
-	output, err := GetCertificateChain(jsonData)
+	measurement, _ := DecodeMeasurement(jsonData)
+	output, err := GetCertificateChain(measurement)
 
 	if err != nil {
 		t.Errorf("Expected error %s", err)

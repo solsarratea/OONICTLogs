@@ -7,24 +7,24 @@ import (
 )
 
 type CTLog struct {
-	PublicKey string `json:"publicKey"`
-	LogID     string `json:"logID"`
+	PublicKey string `json:"PublicKey"`
+	LogID     string `json:"LogID"`
 	URI       string `json:"URI"`
-	Start     string `json:"start"`
-	End       string `json:"end"` //parse it with RFC3339
+	Start     string `json:"Start"`
+	End       string `json:"End"` //parse it with RFC3339
 }
 
 type OONIMeasurements struct {
-	Since string `json:"since"`
-	Until string `json:"until"`
-	Limit string `json:"limit"`
+	Since string `json:"Since"`
+	Until string `json:"Until"`
+	Limit string `json:"Limit"`
 }
 
 type Configuration struct {
-	PathMeasurements string           `json:"path-measurements"`
-	PathCert         string           `json:"path-cert"`
-	CTLog            CTLog            `json:"ctlog"`
-	OONIMeasurements OONIMeasurements `json:"ooni-measurements"`
+	PathMeasurements string           `json:"PathMeasurements"`
+	PathCert         string           `json:"PathCert"`
+	CTLog            CTLog            `json:"CTLog"`
+	OONIMeasurements OONIMeasurements `json:"OONImeasurements"`
 }
 
 func ReadConfigurationFile() (Configuration, error) {

@@ -18,17 +18,23 @@ type TestKeys struct {
 }
 
 type Measurement struct {
-	TestKeys TestKeys `json:"test_keys"`
-	URL      string   `json:"input"`
+	TestKeys  TestKeys `json:"test_keys"`
+	URL       string   `json:"input"`
+	StartTime string   `json:"test_start_time"`
 }
 
-func GetCertificateChain(body []byte) ([][]string, error) {
+func DecodeMeasurement(body []byte) (Measurement, error) {
 	var response Measurement
 
 	err := json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing response: %v", err)
+		return Measurement{}, fmt.Errorf("Error parsing response: %v", err)
 	}
+
+	return response, nil
+}
+
+func GetCertificateChain(response Measurement) ([][]string, error) {
 
 	var handshakesCChain [][]string
 	for _, handshake := range response.TestKeys.TLSHandshakes {

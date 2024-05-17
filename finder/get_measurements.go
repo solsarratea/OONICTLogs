@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"../common"
 	"./measurements"
@@ -11,7 +12,9 @@ import (
 )
 
 func QueryMeasurements(config common.Configuration) ([]byte, error) {
-	apiEndpoint := fmt.Sprintf("https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&since=%s&until=%s&failure=false&order_by=measurement_start_time&order=asc&limit=100", config.OONIMeasurements.Since, config.OONIMeasurements.Until)
+	apiEndpoint := "https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&since=" + url.QueryEscape(config.OONIMeasurements.Since) + "&until=" + url.QueryEscape(config.OONIMeasurements.Until) + "&failure=false&order_by=measurement_start_time&order=asc&limit=100"
+
+	fmt.Printf(apiEndpoint)
 
 	response, err := http.Get(apiEndpoint)
 	if err != nil {

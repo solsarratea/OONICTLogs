@@ -33,7 +33,8 @@ func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	return body, nil
 }
 
-func ProcessMeasurement(config common.Configuration, collection roots.Roots) error {
+func ProcessMeasurement(config common.Configuration, collection roots.Roots) (string, error) {
+
 	apiEndpoint, _ := utils.ReadLineFromFile(config.PathMeasurements)
 
 	re := regexp.MustCompile(`measurement_uid=([^&]+)`)
@@ -41,12 +42,15 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) err
 
 	fmt.Println("Processing measure with id: " + measurement_uid)
 	body, err := QuerySingleMeasurement(apiEndpoint)
+	updatedSince := config.OONIMeasurements.Since
 
 	if err != nil {
-		return fmt.Errorf("Failed to query measurements: %v\n", err)
+		return updatedSince, fmt.Errorf("Failed to query measurements: %v\n", err)
 
 	} else {
-		cchain, _ := certificate.GetCertificateChain(body)
+		measurement, _ := certificate.DecodeMeasurement(body)
+
+		cchain, _ := certificate.GetCertificateChain(measurement)
 		if len(cchain) > 0 {
 			//FIXME: Check TLS handshakes are resolving to the same certificate chane
 			subchain := cchain[0]
@@ -72,15 +76,15 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) err
 						err := utils.WriteStructToJSONFile(submission, path)
 
 						if err != nil {
-							return fmt.Errorf("Failed to write file with valid measurement: %s\n", err)
+							return updatedSince, fmt.Errorf("Failed to write file with valid measurement: %s\n", err)
 						}
 
-						return nil
+						return updatedSince, nil
 					}
 				}
 			}
 		}
-		return fmt.Errorf("Did not found valid root node")
+		return updatedSince, fmt.Errorf("Did not found valid root node")
 
 		/* Obsolete code for writing and analysing cert chains
 		for i, subchain := range cchain {

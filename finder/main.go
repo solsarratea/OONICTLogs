@@ -12,10 +12,18 @@ func Flush(config common.Configuration) {
 	utils.RemoveLineFromFile(config.PathMeasurements)
 }
 
+func UpdateConfigFile(config common.Configuration, updateSince string) {
+	updatedConfig := config
+	updatedConfig.OONIMeasurements.Since = updateSince
+	utils.WriteStructToJSONFile(updatedConfig, "config.json")
+
+}
+
 func Start() {
 
 	fmt.Println("Starting Chainfinder...")
 	config, err := common.ReadConfigurationFile()
+	updateSince := config.OONIMeasurements.Since
 
 	if err != nil {
 		fmt.Println("OOPs, something went wrong... Invalid configuration file!")
@@ -29,11 +37,11 @@ func Start() {
 		isEmpty, _ := utils.IsFileEmpty(config.PathMeasurements)
 
 		if isEmpty {
-			GetRawMeasurements(config) //TODO: Update config
+			UpdateConfigFile(config, updateSince)
+			GetRawMeasurements(config)
 
 		} else {
-			fmt.Println("Processing measurements...")
-			err = ProcessMeasurement(config, roots)
+			updateSince, err = ProcessMeasurement(config, roots)
 			if err != nil {
 				fmt.Printf("%v", err)
 			}
