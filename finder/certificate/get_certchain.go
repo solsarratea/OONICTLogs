@@ -10,17 +10,17 @@ type Certificate struct {
 	Data string `json:"data"`
 }
 
-//TLSHandshake represents child structure of the response from API call get measurement from OONI
+// TLSHandshake represents child structure of the response from API call get measurement from OONI
 type TLSHandshake struct {
 	PeerCertificates []Certificate `json:"peer_certificates"`
 }
 
-//TestKeys represents child structure of the response from API call get measurement from OONI
+// TestKeys represents child structure of the response from API call get measurement from OONI
 type TestKeys struct {
 	TLSHandshakes []TLSHandshake `json:"tls_handshakes"`
 }
 
-//Measurement represents child structure of the response from API call get measurement from OONI
+// Measurement represents child structure of the response from API call get measurement from OONI
 type Measurement struct {
 	TestKeys  TestKeys `json:"test_keys"`
 	URL       string   `json:"input"`

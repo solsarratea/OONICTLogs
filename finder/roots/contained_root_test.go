@@ -3,7 +3,7 @@ package roots
 import (
 	"testing"
 
-	"../certificate"
+	"github.com/solsarratea/OONICTLogs/finder/certificate"
 )
 
 func TestContainedRootEmptyCollection(t *testing.T) {

@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"regexp"
 
-	"../common"
-	"./certificate"
-	"./roots"
-	"./utils"
+	"github.com/solsarratea/OONICTLogs/common"
+	"github.com/solsarratea/OONICTLogs/finder/certificate"
+	"github.com/solsarratea/OONICTLogs/finder/roots"
+	"github.com/solsarratea/OONICTLogs/finder/utils"
 )
 
 func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {

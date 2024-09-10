@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"os"
 
-	"../common"
-	"./measurements"
+	"github.com/solsarratea/OONICTLogs/common"
+	"github.com/solsarratea/OONICTLogs/finder/measurements"
 )
 
 func QueryMeasurements(config common.Configuration) ([]byte, error) {

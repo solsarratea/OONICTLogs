@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"./finder"
-	"./submitter"
+	"github.com/solsarratea/OONICTLogs/finder"
+	"github.com/solsarratea/OONICTLogs/submitter"
 )
 
 // Receives OS arguments and starts: finder and submitter processes

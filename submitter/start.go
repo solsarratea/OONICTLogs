@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"../common"
-	"../finder/utils"
+	"github.com/solsarratea/OONICTLogs/common"
+	"github.com/solsarratea/OONICTLogs/finder/utils"
 )
 
 // SubmissionResponse represents  structure of the response from API call POST chain log

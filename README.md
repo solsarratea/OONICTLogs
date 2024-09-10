@@ -8,20 +8,20 @@ Project intended to:
 ## How to: 
 ### Build
 Set parameters on the `config.json` and run <br>
-`GO111MODULE=auto build -o service main.go` <br>
-`./servcice`
+`go build -o service main.go` <br>
+`./service`
 
 ### Develop
 There are 2 flags for enabling/disabling go-routines
-+ running both:  `GO111MODULE=auto run main.go` 
-+ run proccess to find certificate chains: `GO111MODULE=auto run main.go find`  
-+ run rpocess for submit certchain: `GO111MODULE=auto run main.go submit`
++ running both:  `go run main.go` 
++ run proccess to find certificate chains: `go run main.go find`  
++ run rpocess for submit certchain: `go run main.go submit`
   
 **RECOMENDATION:** running processes independently allows better workflow while testing. **submit** currently has a very slow rate to prevent multiple POSTS.
 
 
 ### Tests
-Unit tests in some packages by running the command: `GO111MODULE=auto test`
+Unit tests in some packages by running the command: `go test`
 
 
 ## Project structure

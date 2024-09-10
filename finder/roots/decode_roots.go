@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"../certificate"
+	"github.com/solsarratea/OONICTLogs/finder/certificate"
 )
 
 // RawRoots represents the response from API call get-roots of Twig CTLog

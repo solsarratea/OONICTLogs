@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"../common"
-	"./utils"
+	"github.com/solsarratea/OONICTLogs/common"
+	"github.com/solsarratea/OONICTLogs/finder/utils"
 )
 
 //  Start orchastrates the:

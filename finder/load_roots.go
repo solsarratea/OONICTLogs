@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"../common"
-	"./roots"
+	"github.com/solsarratea/OONICTLogs/common"
+	"github.com/solsarratea/OONICTLogs/finder/roots"
 )
 
 func QueryRootCertificates(CTLogURI string) ([]byte, error) {
