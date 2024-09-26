@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/solsarratea/OONICTLogs/finder"
-	"github.com/solsarratea/OONICTLogs/submitter"
 )
 
 // Receives OS arguments and starts: finder and submitter processes
@@ -23,12 +22,18 @@ func main() {
 	}
 
 	if *submit {
-		go submitter.Start(logChannel)
+		// go submitter.Start(logChannel)
+		logChannel <- "Submission to TWIG is disabled"
+	}
+
+	if !*find && !*submit {
+		go finder.Start(logChannel)
+		// go submitter.Start(logChannel)
+		logChannel <- "Submission to TWIG is disabled"
 	}
 
 	for msg := range logChannel {
 		fmt.Println(msg)
-
 	}
 
 	select {}

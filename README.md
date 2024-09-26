@@ -3,8 +3,6 @@ Project intended to:
 - learn GO [**]
 - collect all certificate chains from the webconnectivity OONI measurements to create Certificate Transparency logs, using the Let’s Encrypt testing Twig logs as a target.
 
-**WARNING:** It was a rapid prototyping, still did not get a successfull reply from submission to Twig.
-
 ## How to: 
 ### Build
 Set parameters on the `config.json` and run <br>
