@@ -54,7 +54,7 @@ Queries and processes all measurements to extract the certificate chains for sub
  - Check if already submitted by using the signature field:
  ["Using the signature field, we can verify that the certificate was submitted to a log. Using our SCT deep dive guide, you could further decode this value."](https://letsencrypt.org/docs/ct-logs/#Sunlight)
 
-- Improve log system: specially for submitter.
+~- Improve log system~
 - Research on async functions, improve function calls and concurrency
 - Do not allow read/write at same time !! (it was OK for testing)
 - `raw_measurements.txt` proabably be replaced for a stack (it was also OK for testing)
