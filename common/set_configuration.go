@@ -4,7 +4,6 @@ package common
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -33,7 +32,6 @@ func ReadConfigurationFile() (Configuration, error) {
 
 	file, err := os.Open("config.json")
 	if err != nil {
-		fmt.Println("Failed opening `config.json`:", err)
 		return Configuration{}, err
 	}
 
@@ -43,7 +41,6 @@ func ReadConfigurationFile() (Configuration, error) {
 	err = json.NewDecoder(file).Decode(&config)
 
 	if err != nil {
-		fmt.Println("Failed parsing `config.json`:", err)
 		return Configuration{}, err
 	}
 

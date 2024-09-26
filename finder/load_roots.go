@@ -38,7 +38,7 @@ func LoadRoots(config common.Configuration) (roots.Roots, error) {
 	body, err := QueryRootCertificates(config.CTLog.URI)
 
 	if err != nil {
-		return roots.Roots{}, fmt.Errorf("Error fetching the root nodes from %s", config.CTLog.URI)
+		return roots.Roots{}, fmt.Errorf("error fetching the root nodes from %s", config.CTLog.URI)
 
 	}
 

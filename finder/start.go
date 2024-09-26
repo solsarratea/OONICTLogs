@@ -13,20 +13,25 @@ import (
 //  - Updating on the `raw_measurements.txt`, which acts as a stack of measurements
 //  - Calls for processing individual measurement
 
-func Start() {
+func Start(logChannel chan<- string) {
+	msg := "Starting Chainfinder..."
+	logChannel <- msg
 
-	fmt.Println("Starting Chainfinder...")
 	config, err := common.ReadConfigurationFile()
 
 	// updateSince set the lower boundary for raw measurement queries
 	updateSince := config.OONIMeasurements.Since
 
 	if err != nil {
-		fmt.Println("OOPs, something went wrong... Invalid configuration file!")
+		msg := fmt.Sprintf("OOPs, something went wrong... Invalid configuration file: %v ", err)
+		logChannel <- msg
 		return
 	}
 
 	roots, err := LoadRoots(config)
+	if err != nil {
+		logChannel <- fmt.Sprintf("Error loading roots %v", err)
+	}
 
 	for {
 
@@ -38,10 +43,11 @@ func Start() {
 
 		} else {
 			// updateSince is updated with the measurement's start time
-			updateSince, err = ProcessMeasurement(config, roots)
+			updateSince, err = ProcessMeasurement(config, roots, logChannel)
 
 			if err != nil {
-				fmt.Printf("%v", err)
+				msg := fmt.Sprintf("%v", err)
+				logChannel <- msg
 			}
 
 			Flush(config)

@@ -15,6 +15,9 @@ import (
 
 func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 	response, err := http.Get(apiEndpoint)
+	if err != nil {
+		return nil, fmt.Errorf("invalid response: %w", err)
+	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
@@ -37,19 +40,21 @@ func QuerySingleMeasurement(apiEndpoint string) ([]byte, error) {
 // Writes  entry into specified directory (in config.json) with valid format according to https://crt.sh/gen-add-chain
 // Returns the starting measurement time.
 
-func ProcessMeasurement(config common.Configuration, collection roots.Roots) (string, error) {
+func ProcessMeasurement(config common.Configuration, collection roots.Roots, logChannel chan<- string) (string, error) {
 
 	apiEndpoint, _ := utils.ReadLineFromFile(config.PathMeasurements)
 
 	re := regexp.MustCompile(`measurement_uid=([^&]+)`)
 	measurement_uid := re.FindStringSubmatch(apiEndpoint)[1]
 
-	fmt.Println("Processing measure with id: " + measurement_uid)
+	msg := fmt.Sprintln("processing measure with id: " + measurement_uid)
+	logChannel <- msg
+
 	body, err := QuerySingleMeasurement(apiEndpoint)
 	updatedSince := config.OONIMeasurements.Since
 
 	if err != nil {
-		return updatedSince, fmt.Errorf("Failed to query measurements: %v\n", err)
+		return updatedSince, fmt.Errorf("failed to query measurements: %v", err)
 
 	} else {
 		measurement, _ := certificate.DecodeMeasurement(body)
@@ -66,7 +71,8 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 					hasRoot := roots.FindParent(cert, collection)
 
 					if hasRoot != nil {
-						fmt.Printf("\nWEHAVEONE ＼(＾O＾)／	 \n")
+						msg := "wehaveone ＼(＾O＾)／"
+						logChannel <- msg
 						base64Cert := base64.StdEncoding.EncodeToString(hasRoot.Raw)
 
 						final := append(subchain, base64Cert)
@@ -79,7 +85,7 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 						err := utils.WriteStructToJSONFile(submission, path)
 
 						if err != nil {
-							return updatedSince, fmt.Errorf("Failed to write file with valid measurement: %s\n", err)
+							return updatedSince, fmt.Errorf("failed to write file with valid measurement: %s", err)
 						}
 
 						return updatedSince, nil
@@ -88,6 +94,6 @@ func ProcessMeasurement(config common.Configuration, collection roots.Roots) (st
 			}
 		}
 
-		return updatedSince, fmt.Errorf("Did not found valid root node")
+		return updatedSince, fmt.Errorf("did not found valid root node")
 	}
 }

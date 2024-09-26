@@ -12,11 +12,8 @@ import (
 )
 
 func QueryMeasurements(config common.Configuration) ([]byte, error) {
-
 	//  Querying window for raw measurements depend on config
 	apiEndpoint := "https://api.ooni.io/api/v1/measurements?test_name=web_connectivity&since=" + url.QueryEscape(config.OONIMeasurements.Since) + "&until=" + url.QueryEscape(config.OONIMeasurements.Until) + "&failure=false&order_by=measurement_start_time&order=asc&limit=100"
-
-	fmt.Printf(apiEndpoint)
 
 	response, err := http.Get(apiEndpoint)
 	if err != nil {

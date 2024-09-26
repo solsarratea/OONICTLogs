@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -24,7 +23,7 @@ type SubmissionResponse struct {
 	Id        string `json:"id"`
 }
 
-//PostChain implements an API call for posting certificate chain
+// PostChain implements an API call for posting certificate chain
 func PostChain(URI string, data []byte) ([]byte, error) {
 	apiEndpoint := URI + "ct/v1/add-chain"
 	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(data))
@@ -41,7 +40,7 @@ func PostChain(URI string, data []byte) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -54,12 +53,13 @@ type ValidSubmission struct {
 }
 
 // ProcessSubmissions implements the reading and posting of valid certificate chain
-func ProcessSubmissions(config common.Configuration) {
+func ProcessSubmissions(config common.Configuration, logChannel chan<- string) {
 	dir := config.PathCert
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 
 	if err != nil {
-		log.Fatalf("Failed to read directory: %v", err)
+		msg := fmt.Sprintf("Failed to read directory: %v", err)
+		logChannel <- msg
 	}
 
 	for _, file := range files {
@@ -68,23 +68,27 @@ func ProcessSubmissions(config common.Configuration) {
 
 			measurementUID := file.Name()
 
-			fmt.Printf("Submitting entry for: %s\n", measurementUID)
+			msg := fmt.Sprintf("Submitting entry for: %s\n", measurementUID)
+			logChannel <- msg
 
-			data, err := ioutil.ReadFile(filePath)
+			data, err := os.ReadFile(filePath)
 			if err != nil {
-				log.Printf("Failed to read file %s: %v", filePath, err)
+				msg := fmt.Sprintf("Failed to read file %s: %v", filePath, err)
+				logChannel <- msg
 				return
 			}
 
 			//Check if the format is still valid
 			var submission ValidSubmission
 			if err := json.Unmarshal(data, &submission); err != nil {
-				log.Printf("Failed to unmarshal JSON from file %s: %v", filePath, err)
+				msg := fmt.Sprintf("Failed to unmarshal JSON from file %s: %v", filePath, err)
+				logChannel <- msg
 
 				// Remove the file after reading
 				err = os.Remove(filePath)
 				if err != nil {
-					log.Printf("Failed to remove file %s: %v", filePath, err)
+					msg := fmt.Sprintf("Failed to remove file %s: %v", filePath, err)
+					logChannel <- msg
 					continue
 				}
 
@@ -94,13 +98,15 @@ func ProcessSubmissions(config common.Configuration) {
 			// Make HTTP POST request
 			body, err := PostChain(config.CTLog.URI, data)
 			if err != nil {
-				log.Printf("Failed to submit data for %s: %v", measurementUID, err)
+				msg := fmt.Sprintf("Failed to submit data for %s: %v", measurementUID, err)
+				logChannel <- msg
 				return
 			}
 			// Remove the file after reading
 			err = os.Remove(filePath)
 			if err != nil {
-				log.Printf("Failed to remove file %s: %v", filePath, err)
+				msg := fmt.Sprintf("Failed to remove file %s: %v", filePath, err)
+				logChannel <- msg
 				continue
 			}
 
@@ -110,14 +116,17 @@ func ProcessSubmissions(config common.Configuration) {
 			surl := "submission-response-" + measurementUID + ".txt"
 			utils.WriteStringToFile(string(body), surl)
 
-			fmt.Printf("Response has been written at:  %s \n", surl)
+			msg = fmt.Sprintf("Response has been written at:  %s \n", surl)
+			logChannel <- msg
 
 			if err != nil {
-				fmt.Printf("Error parsing response: %v", err)
+				msg := fmt.Sprintf("Error parsing response: %v", err)
+				logChannel <- msg
 				return
 			}
 
-			fmt.Printf("Success entry for: ", measurementUID)
+			msg = fmt.Sprintf("Success entry for: %s", measurementUID)
+			logChannel <- msg
 			time.Sleep(500 * time.Second)
 		}
 	}
@@ -125,18 +134,18 @@ func ProcessSubmissions(config common.Configuration) {
 }
 
 // Start orchastrates the submission of valid entries shared directory
-func Start() {
-	fmt.Println("Starting Submitter")
+func Start(logChannel chan<- string) {
+	logChannel <- "Starting Submitter"
 
 	config, err := common.ReadConfigurationFile()
 
 	if err != nil {
-		fmt.Println("OOPs, something went wrong... Invalid configuration file!")
+		logChannel <- "OOPs, something went wrong... Invalid configuration file!"
 		return
 	}
 
 	for {
-		ProcessSubmissions(config)
+		ProcessSubmissions(config, logChannel)
 		time.Sleep(500 * time.Second)
 	}
 }

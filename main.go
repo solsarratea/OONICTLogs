@@ -10,17 +10,25 @@ import (
 
 // Receives OS arguments and starts: finder and submitter processes
 func main() {
+
+	logChannel := make(chan string, 2)
+	logChannel <- "Starting OONICTLogs..."
+
 	find := flag.Bool("find", false, "Enable the finder process")
 	submit := flag.Bool("submit", false, "Enable the submit process")
 	flag.Parse()
 
-	fmt.Println("Starting OONICTLogs...")
 	if *find {
-		go finder.Start()
+		go finder.Start(logChannel)
 	}
 
 	if *submit {
-		go submitter.Start()
+		go submitter.Start(logChannel)
+	}
+
+	for msg := range logChannel {
+		fmt.Println(msg)
+
 	}
 
 	select {}
